@@ -1,0 +1,27 @@
+/* Bordered Table Variant */
+.rdt-variant-bordered {
+  border: 1px solid var(--rdt-border-strong);
+  border-radius: var(--rdt-radius-md);
+  box-shadow: var(--rdt-shadow-sm);
+  background: var(--rdt-bg);
+  overflow: hidden;
+}
+
+.rdt-variant-bordered .rdt-th,
+.rdt-variant-bordered .rdt-td {
+  border-right: 1px solid var(--rdt-border);
+  border-bottom: 1px solid var(--rdt-border);
+}
+
+.rdt-variant-bordered .rdt-th:last-child,
+.rdt-variant-bordered .rdt-td:last-child {
+  border-right: none;
+}
+
+.rdt-variant-bordered .rdt-tr:last-child .rdt-td {
+  border-bottom: none;
+}
+
+.rdt-variant-bordered .rdt-tr:hover {
+  background-color: var(--rdt-bg-hover);
+}

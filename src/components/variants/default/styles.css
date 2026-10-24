@@ -1,0 +1,24 @@
+/* Default Table Variant */
+.rdt-variant-default {
+  border: 1px solid var(--rdt-border);
+  border-radius: var(--rdt-radius-md);
+  box-shadow: var(--rdt-shadow-sm);
+  background: var(--rdt-bg);
+  overflow: hidden;
+}
+
+.rdt-variant-default .rdt-th {
+  border-bottom: 1px solid var(--rdt-border);
+}
+
+.rdt-variant-default .rdt-td {
+  border-bottom: 1px solid var(--rdt-border-subtle);
+}
+
+.rdt-variant-default .rdt-tr:last-child .rdt-td {
+  border-bottom: none;
+}
+
+.rdt-variant-default .rdt-tr:hover {
+  background-color: var(--rdt-bg-hover);
+}

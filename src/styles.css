@@ -1,0 +1,10 @@
+@import './styles/variables.css';
+@import './styles/base.css';
+@import './styles/utilities.css';
+
+/* Variants */
+@import './components/variants/default/styles.css';
+@import './components/variants/bordered/styles.css';
+@import './components/variants/minimal/styles.css';
+@import './components/variants/striped/styles.css';
+@import './components/variants/modern/styles.css';

@@ -1,21 +1,52 @@
-# React Data Table
+# react-data-table
 
-A modern, highly customizable, and lightweight React data table library with built-in sorting, search filtering, pagination, column pinning, reordering, custom cell renderers, and elegant table variants.
+A production-ready, feature-rich, and lightweight React data table library with 5 distinct UI variants, column pinning, drag-and-drop column reordering, debounced search filtering (client & server-side), pagination, custom cell renderers (Text, Badge, Avatar, Date), and fully working PDF, Excel (`.xlsx`), CSV export, and printing.
 
-## Features
+[![npm version](https://img.shields.io/npm/v/react-data-table.svg)](https://www.npmjs.com/package/react-data-table)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-- ⚡ **Lightweight & Fast**: Built with modern React and TypeScript.
-- 🎨 **Multiple Variants**: Out of the box `default`, `bordered`, `minimal`, `striped`, and `modern` (glassmorphism/card) styles.
-- 🔍 **Global & Column Search**: Instant search filtering across data fields.
-- ↕️ **Multi-Direction Sorting**: Ascending, descending, and reset column sorting.
-- 📄 **Pagination**: Flexible pagination with custom page sizes and page jump controls.
-- 📌 **Column Pinning**: Pin crucial columns to the left or right during horizontal scroll.
-- 🔀 **Column Reordering**: Easily reorder column positions dynamically.
-- 🧩 **Custom Cells**: Built-in cells for `TextCell`, `BadgeCell`, `AvatarCell`, and `DateCell`, plus custom renderers.
-- 📥 **Export to CSV / JSON**: Built-in utility to export table rows.
-- ♿ **Accessible & Responsive**: Keyboard friendly and mobile responsive horizontal scrolling.
+---
 
-## Installation
+## ✨ Features
+
+- 🎨 **5 UI Variants**: `default`, `bordered`, `minimal`, `striped`, and `modern` (glassmorphism/elevated card) sharing the identical table logic.
+- ⚙️ **Configurable Columns**:
+  - `key` / `accessorKey`: Unique field key or nested path (`user.profile.name`).
+  - `title` / `header`: Custom ReactNode or string label.
+  - `value`: Custom value extractor function.
+  - `description`: Secondary subtitle text displayed underneath the cell value.
+  - `avatar`: URL string, JSX element, or avatar extractor with fallback initials.
+  - `type`: Built-in automatic rendering for `'text' | 'badge' | 'avatar' | 'date' | 'number'`.
+  - `badge`: Status colors (`success`, `warning`, `error`, `info`, `neutral`, `primary`), custom hex colors, and dot indicators.
+  - `copy`: One-click copy-to-clipboard button with visual feedback.
+  - `render` / `cell`: Custom render function.
+- 🔢 **Built-in Columns**:
+  - Continuous **Serial Number (`#`)** column pinned to the left by default.
+  - Floating **Row Selection** checkbox column with indeterminate "Select All" support.
+  - Configurable **Three-Dot Action** column pinned to the right by default with dropdown items, icons, and danger/warning themes.
+  - Built-in columns remain fixed and separate from draggable data columns.
+- 🔍 **Debounced Search**:
+  - Client-side real-time filtering across all visible fields by default.
+  - Server/API search via `onSearch` callback with automatic debounce and prevention of double-filtering.
+- 📌 **Column Management**:
+  - Drag-and-drop column reordering.
+  - Column Pinning: `pinned: true` / `'left'` for initially pinned, `pinned: false` to disable pinning, omitted to allow user-controlled toggle.
+  - Column visibility menu to show/hide columns.
+- 📄 **Data Operations**:
+  - Multi-type column sorting (numbers, dates, strings, nulls last).
+  - Pagination with customizable page sizes (`5`, `10`, `20`, `50`, `100`).
+  - Loading spinner, customizable empty states, and error retry views.
+- 📥 **Real Export & Printing**:
+  - Real Excel (`.xlsx`) generation via SheetJS.
+  - Real PDF generation via `jsPDF` and `jspdf-autotable`.
+  - CSV and JSON downloads.
+  - Clean `@media print` layout hiding buttons/pagination for clean paper reports.
+- 📱 **Responsive Layouts**:
+  - Supports `layout="table"`, `"compact"`, `"card"`, and `"auto"` (responsive card view on mobile).
+
+---
+
+## 📦 Installation
 
 ```bash
 npm install react-data-table
@@ -25,104 +56,214 @@ yarn add react-data-table
 pnpm add react-data-table
 ```
 
-## Quick Start
+### Peer Dependencies
+Ensure you have React 18 or 19 installed:
+```bash
+npm install react react-dom
+```
+
+---
+
+## 🚀 Quick Start
+
+Import the component and stylesheet:
 
 ```tsx
 import React from 'react';
-import { DataTable, ColumnDef, BadgeCell } from 'react-data-table';
-import 'react-data-table/dist/styles.css';
+import { DataTable, type ColumnDef } from 'react-data-table';
+import 'react-data-table/styles.css';
 
 interface User {
   id: number;
   name: string;
   email: string;
+  avatar: string;
   role: string;
-  status: 'active' | 'pending' | 'inactive';
+  status: 'Active' | 'Pending' | 'Inactive';
+  createdAt: string;
 }
 
 const columns: ColumnDef<User>[] = [
   {
-    accessorKey: 'id',
-    header: 'ID',
-    width: 80,
+    key: 'name',
+    title: 'User',
+    type: 'avatar',
+    avatar: (row) => row.avatar,
+    value: (row) => row.name,
+    description: (row) => row.email,
+    pinned: true, // Initially pinned
+  },
+  {
+    key: 'role',
+    title: 'Role',
     enableSorting: true,
   },
   {
-    accessorKey: 'name',
-    header: 'Name',
+    key: 'status',
+    title: 'Status',
+    type: 'badge',
+    badge: (val) => ({
+      variant: val === 'Active' ? 'success' : val === 'Pending' ? 'warning' : 'neutral',
+      dot: true,
+    }),
+  },
+  {
+    key: 'createdAt',
+    title: 'Joined Date',
+    type: 'date',
     enableSorting: true,
-  },
-  {
-    accessorKey: 'email',
-    header: 'Email Address',
-  },
-  {
-    accessorKey: 'role',
-    header: 'Role',
-  },
-  {
-    accessorKey: 'status',
-    header: 'Status',
-    cell: ({ value }) => (
-      <BadgeCell
-        value={value}
-        variant={value === 'active' ? 'success' : value === 'pending' ? 'warning' : 'neutral'}
-      />
-    ),
   },
 ];
 
-const data: User[] = [
-  { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin', status: 'active' },
-  { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Editor', status: 'pending' },
-  { id: 3, name: 'Charlie Brown', email: 'charlie@example.com', role: 'Viewer', status: 'inactive' },
+const users: User[] = [
+  {
+    id: 1,
+    name: 'Sarah Connor',
+    email: 'sarah@sky.net',
+    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100',
+    role: 'Security Specialist',
+    status: 'Active',
+    createdAt: '2023-04-15',
+  },
+  {
+    id: 2,
+    name: 'John Doe',
+    email: 'john@sky.net',
+    avatar: '',
+    role: 'DevOps Engineer',
+    status: 'Pending',
+    createdAt: '2023-08-20',
+  },
 ];
 
 export default function App() {
   return (
     <DataTable
-      data={data}
+      data={users}
       columns={columns}
       variant="modern"
       searchable
       paginate
       pageSize={10}
+      enableRowSelection
+      enableColumnReorder
+      enableColumnPinning
       enableExport
+      enablePrint
+      actions={[
+        {
+          label: 'View Profile',
+          onPress: (row) => console.log('Viewing', row.name),
+        },
+        {
+          label: 'Delete User',
+          color: 'danger',
+          onPress: (row) => console.log('Deleting', row.name),
+        },
+      ]}
     />
   );
 }
 ```
 
-## Variants
+---
 
-Select a variant that fits your UI aesthetics:
-- `default`: Clean, understated borders with standard padding.
-- `bordered`: Grid borders for clear cell separation.
-- `minimal`: Borderless, modern clean whitespace.
-- `striped`: Alternating row background for large tables.
-- `modern`: Elevated card styling with soft shadows and rounded corners.
+## 🎨 Table Variants
+
+Switch variants using the `variant` prop or dedicated component exports:
 
 ```tsx
-<DataTable data={data} columns={columns} variant="striped" />
+// Via prop
+<DataTable data={data} columns={columns} variant="modern" />
+
+// Or via dedicated variant components:
+import { ModernTable, BorderedTable, StripedTable, MinimalTable, DefaultTable } from 'react-data-table';
+
+<ModernTable data={data} columns={columns} />
+<BorderedTable data={data} columns={columns} />
+<StripedTable data={data} columns={columns} />
+<MinimalTable data={data} columns={columns} />
+<DefaultTable data={data} columns={columns} />
 ```
 
-## Built-in Cells
+| Variant | Description |
+|---|---|
+| `default` | Standard clean borders with soft background hover. |
+| `bordered` | Full grid lines separating every row and column cell. |
+| `minimal` | Clean whitespace design without outer card borders. |
+| `striped` | Alternating zebra-striped rows for high data density readability. |
+| `modern` | Elevated glassmorphism/card with subtle box shadow and rounded corners. |
 
-- `<TextCell />`: Text display with truncation, prefix, suffix, and subtitle.
-- `<BadgeCell />`: Status badges with variants (`success`, `warning`, `error`, `info`, `neutral`).
-- `<AvatarCell />`: User avatars with initials fallback and subtitle description.
-- `<DateCell />`: Formatted date/time with locale and format options.
+---
 
-## Hooks
+## 🧩 Built-in Cell Types
 
-Customize your own table UI with internal hooks:
-- `useDataTable`: Master hook managing all table features.
-- `useTableSearch`: Real-time filtering.
-- `useTableSort`: Column sorting logic.
-- `useTablePagination`: Pagination state and slicing.
-- `useColumnPinning`: Column pinning left/right.
-- `useColumnReorder`: Reorder column order.
+Configure the `type` property in any `ColumnDef`:
 
-## License
+- **Text (`type: 'text'`)**: Standard text with optional subtitle (`description`) and clipboard copy (`copy: true`).
+- **Avatar (`type: 'avatar'`)**: Image URL with fallback initials, primary title, and secondary description.
+- **Badge (`type: 'badge'`)**: Status pill badge with `variant` (`success`, `warning`, `error`, `info`, `neutral`, `primary`), custom `color`, and status `dot`.
+- **Date (`type: 'date'`)**: Localized date formatting, `datetime`, `time`, or relative times ("2 days ago").
+- **Number (`type: 'number'`)**: Locale-formatted numeric display with right-alignment.
 
-MIT © Kheraj Suthar
+---
+
+## 🔍 Server-side Search & Pagination
+
+Connect directly to your backend API:
+
+```tsx
+<DataTable
+  data={serverRows}
+  columns={columns}
+  searchable
+  onSearch={async (query) => {
+    // Automatically debounced. Client-side filtering is bypassed.
+    const res = await fetchUsers({ query });
+    setServerRows(res.data);
+  }}
+  paginate
+  pageIndex={page}
+  totalRows={totalCount}
+  onPageChange={(nextPage) => setPage(nextPage)}
+  loading={isLoading}
+/>
+```
+
+---
+
+## 📥 Exporting & Printing
+
+Export buttons are included in the toolbar by default:
+- **Excel (.xlsx)**: Exports real binary spreadsheets.
+- **PDF**: Landscape formatted document with header titles and timestamps.
+- **CSV**: RFC-compliant CSV with visible columns.
+- **Print**: Opens print dialog formatted with `@media print`.
+
+You can also trigger exports programmatically using utility functions:
+
+```tsx
+import { exportToXLSX, exportToPDF, exportToCSV, printTable } from 'react-data-table';
+
+exportToXLSX(data, columns, 'custom-report.xlsx');
+exportToPDF(data, columns, 'custom-report.pdf', 'Executive Report');
+printTable();
+```
+
+---
+
+## 🪝 Custom Hooks
+
+Build your own customized table interface using the exported hooks:
+- `useDataTable(props)`: The complete orchestrator managing all table features.
+- `useTableSearch({ data, columns, onSearch })`: Debounced search filtering.
+- `useTableSort({ data, columns, initialSort })`: Multi-type sorting.
+- `useTablePagination({ data, initialPageSize })`: Pagination logic and page slicing.
+- `useColumnPinning({ columns })`: Left/right pinning and offsets.
+- `useColumnReorder({ columns })`: Drag-and-drop column ordering and visibility.
+
+---
+
+## 📄 License
+
+MIT © [Kheraj Suthar](https://github.com/kheraj-suthar)

@@ -1,0 +1,315 @@
+.rdt-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font-family: var(--rdt-font-family);
+  color: var(--rdt-text-primary);
+  background-color: var(--rdt-bg);
+  box-sizing: border-box;
+}
+
+.rdt-container *,
+.rdt-container *::before,
+.rdt-container *::after {
+  box-sizing: inherit;
+}
+
+.rdt-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  position: relative;
+  -webkit-overflow-scrolling: touch;
+}
+
+.rdt-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  text-align: left;
+  font-size: var(--rdt-font-size-sm);
+  line-height: 1.5;
+}
+
+/* Headings & Cells */
+.rdt-th,
+.rdt-td {
+  padding: 12px 16px;
+  vertical-align: middle;
+}
+
+.rdt-th {
+  font-weight: 600;
+  color: var(--rdt-text-secondary);
+  background-color: var(--rdt-bg-muted);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.rdt-th-sortable {
+  cursor: pointer;
+  transition: background-color var(--rdt-transition-fast);
+}
+
+.rdt-th-sortable:hover {
+  background-color: var(--rdt-bg-subtle);
+}
+
+.rdt-th-content {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rdt-drag-handle {
+  display: inline-flex;
+  align-items: center;
+  color: var(--rdt-text-muted);
+  cursor: grab;
+  opacity: 0.5;
+  transition: opacity var(--rdt-transition-fast);
+}
+
+.rdt-th:hover .rdt-drag-handle {
+  opacity: 1;
+}
+
+.rdt-th-dragover {
+  background-color: rgba(37, 99, 235, 0.1) !important;
+  border-left: 2px solid var(--rdt-primary) !important;
+}
+
+.rdt-pin-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 2px 4px;
+  color: var(--rdt-text-muted);
+  cursor: pointer;
+  border-radius: var(--rdt-radius-sm);
+  opacity: 0.5;
+  transition: all var(--rdt-transition-fast);
+}
+
+.rdt-th:hover .rdt-pin-btn,
+.rdt-pin-btn.rdt-pin-active {
+  opacity: 1;
+}
+
+.rdt-pin-btn:hover {
+  background-color: var(--rdt-bg-subtle);
+  color: var(--rdt-primary);
+}
+
+.rdt-pin-btn.rdt-pin-active {
+  color: var(--rdt-primary);
+}
+
+.rdt-sort-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--rdt-text-muted);
+  transition: transform var(--rdt-transition-fast), color var(--rdt-transition-fast);
+}
+
+.rdt-sort-icon.rdt-sort-active {
+  color: var(--rdt-primary);
+}
+
+/* Rows */
+.rdt-tr {
+  transition: background-color var(--rdt-transition-fast);
+}
+
+.rdt-tr-clickable {
+  cursor: pointer;
+}
+
+.rdt-tr-selected {
+  background-color: var(--rdt-bg-selected) !important;
+}
+
+/* Sticky Header */
+.rdt-sticky-header .rdt-th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+}
+
+/* Pinned Columns */
+.rdt-pinned-left,
+.rdt-pinned-right {
+  position: sticky;
+  z-index: 2;
+  background-color: inherit;
+}
+
+.rdt-sticky-header .rdt-pinned-left,
+.rdt-sticky-header .rdt-pinned-right {
+  z-index: 4;
+}
+
+.rdt-pinned-left {
+  box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.08);
+}
+
+.rdt-pinned-right {
+  box-shadow: -2px 0 4px -2px rgba(0, 0, 0, 0.08);
+}
+
+/* Size Variants */
+.rdt-size-sm .rdt-th,
+.rdt-size-sm .rdt-td {
+  padding: 8px 12px;
+  font-size: var(--rdt-font-size-xs);
+}
+
+.rdt-size-lg .rdt-th,
+.rdt-size-lg .rdt-td {
+  padding: 16px 20px;
+  font-size: var(--rdt-font-size-md);
+}
+
+/* Layout Compact */
+.rdt-layout-compact .rdt-th,
+.rdt-layout-compact .rdt-td {
+  padding: 6px 10px;
+  font-size: var(--rdt-font-size-xs);
+}
+
+/* Layout Card (or Mobile Auto) */
+@media (max-width: 768px) {
+  .rdt-layout-auto .rdt-thead {
+    display: none;
+  }
+  .rdt-layout-auto .rdt-tbody,
+  .rdt-layout-auto .rdt-tr,
+  .rdt-layout-auto .rdt-td {
+    display: block;
+    width: 100%;
+  }
+  .rdt-layout-auto .rdt-tr {
+    margin-bottom: 12px;
+    border: 1px solid var(--rdt-border);
+    border-radius: var(--rdt-radius-md);
+    background: var(--rdt-bg);
+    padding: 8px 12px;
+  }
+  .rdt-layout-auto .rdt-td {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--rdt-border-subtle);
+  }
+  .rdt-layout-auto .rdt-td:last-child {
+    border-bottom: none;
+  }
+}
+
+.rdt-layout-card .rdt-thead {
+  display: none;
+}
+.rdt-layout-card .rdt-tbody,
+.rdt-layout-card .rdt-tr,
+.rdt-layout-card .rdt-td {
+  display: block;
+  width: 100%;
+}
+.rdt-layout-card .rdt-tr {
+  margin-bottom: 12px;
+  border: 1px solid var(--rdt-border);
+  border-radius: var(--rdt-radius-md);
+  background: var(--rdt-bg);
+  padding: 12px 16px;
+  box-shadow: var(--rdt-shadow-sm);
+}
+.rdt-layout-card .rdt-td {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--rdt-border-subtle);
+}
+.rdt-layout-card .rdt-td:last-child {
+  border-bottom: none;
+}
+
+/* Empty, Loading, and Error States */
+.rdt-empty-state,
+.rdt-loading-state,
+.rdt-error-state {
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.rdt-empty-content,
+.rdt-loading-content,
+.rdt-error-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--rdt-text-muted);
+}
+
+.rdt-error-content {
+  color: var(--rdt-error);
+}
+
+.rdt-error-text {
+  font-weight: 500;
+  color: var(--rdt-text-primary);
+}
+
+.rdt-spinner {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  border: 3px solid var(--rdt-border);
+  border-top-color: var(--rdt-primary);
+  border-radius: 50%;
+  animation: rdt-spin 0.8s linear infinite;
+}
+
+@keyframes rdt-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Clean Print Layout */
+@media print {
+  body {
+    background: transparent !important;
+  }
+  .rdt-toolbar,
+  .rdt-pagination,
+  .rdt-actions-container,
+  .rdt-th-actions,
+  .rdt-td-actions,
+  .rdt-copy-btn,
+  .rdt-drag-handle,
+  .rdt-pin-btn {
+    display: none !important;
+  }
+  .rdt-container {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+  .rdt-table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+  .rdt-th,
+  .rdt-td {
+    border: 1px solid #000000 !important;
+    padding: 6px 10px !important;
+    color: #000000 !important;
+    background: transparent !important;
+  }
+}

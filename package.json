@@ -1,0 +1,74 @@
+{
+  "name": "react-data-table",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "A production-ready, feature-rich React data table library with 5 UI variants, column pinning, sorting, search, pagination, and PDF/Excel export.",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/index.d.mts",
+        "require": "./dist/index.d.cts"
+      },
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./styles.css": "./dist/style.css",
+    "./style.css": "./dist/style.css",
+    "./dist/styles.css": "./dist/style.css",
+    "./dist/style.css": "./dist/style.css"
+  },
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "node --import ./tests/setup.js --import tsx --test tests/*.test.tsx"
+  },
+  "keywords": [
+    "react",
+    "data-table",
+    "datatable",
+    "table",
+    "grid",
+    "react-component",
+    "pagination",
+    "sorting",
+    "export-excel",
+    "export-pdf"
+  ],
+  "author": "Kheraj Suthar",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">=18.0.0 || >=19.0.0",
+    "react-dom": ">=18.0.0 || >=19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": false
+    },
+    "react-dom": {
+      "optional": false
+    }
+  },
+  "dependencies": {
+    "jspdf": "^4.2.1",
+    "jspdf-autotable": "^5.0.9",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@tsdown/css": "^0.23.2",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "tsdown": "^0.23.2",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  }
+}

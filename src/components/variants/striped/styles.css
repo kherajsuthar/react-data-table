@@ -1,0 +1,29 @@
+/* Striped Table Variant */
+.rdt-variant-striped {
+  border: 1px solid var(--rdt-border);
+  border-radius: var(--rdt-radius-md);
+  box-shadow: var(--rdt-shadow-sm);
+  background: var(--rdt-bg);
+  overflow: hidden;
+}
+
+.rdt-variant-striped .rdt-th {
+  background-color: var(--rdt-bg-subtle);
+  border-bottom: 1px solid var(--rdt-border);
+}
+
+.rdt-variant-striped .rdt-tbody .rdt-tr:nth-child(even) {
+  background-color: var(--rdt-bg-muted);
+}
+
+.rdt-variant-striped .rdt-tbody .rdt-tr:nth-child(odd) {
+  background-color: var(--rdt-bg);
+}
+
+.rdt-variant-striped .rdt-td {
+  border-bottom: 1px solid var(--rdt-border-subtle);
+}
+
+.rdt-variant-striped .rdt-tr:hover {
+  background-color: var(--rdt-bg-hover) !important;
+}

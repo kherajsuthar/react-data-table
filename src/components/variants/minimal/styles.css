@@ -1,0 +1,38 @@
+/* Minimal Table Variant */
+.rdt-variant-minimal {
+  border: none;
+  background: transparent;
+}
+
+.rdt-variant-minimal .rdt-toolbar {
+  border-bottom: 1px solid var(--rdt-border-subtle);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.rdt-variant-minimal .rdt-th {
+  background: transparent;
+  border-bottom: 2px solid var(--rdt-border);
+  color: var(--rdt-text-muted);
+  text-transform: uppercase;
+  font-size: var(--rdt-font-size-xs);
+  letter-spacing: 0.05em;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.rdt-variant-minimal .rdt-td {
+  border-bottom: 1px solid var(--rdt-border-subtle);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.rdt-variant-minimal .rdt-tr:hover {
+  background-color: var(--rdt-bg-subtle);
+}
+
+.rdt-variant-minimal .rdt-pagination {
+  border-top: 1px solid var(--rdt-border-subtle);
+  padding-left: 0;
+  padding-right: 0;
+}
