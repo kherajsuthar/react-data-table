@@ -281,35 +281,196 @@
   }
 }
 
-/* Clean Print Layout */
+/* Clean & Compact Print Layout (No Unwanted Gaps, No Selection Checkboxes) */
 @media print {
-  body {
-    background: transparent !important;
+  @page {
+    margin: 12mm 10mm;
+    size: auto;
   }
+
+  html,
+  body {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #111827 !important;
+    font-size: 10pt !important;
+    line-height: 1.35 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 1. Hide All Non-Printable & Interactive Controls */
   .rdt-toolbar,
   .rdt-pagination,
-  .rdt-actions-container,
+  .rdt-th-selection,
+  .rdt-td-selection,
+  .rdt-checkbox,
   .rdt-th-actions,
   .rdt-td-actions,
+  .rdt-actions-container,
+  .rdt-actions-trigger,
+  .rdt-actions-menu,
   .rdt-copy-btn,
   .rdt-drag-handle,
-  .rdt-pin-btn {
+  .rdt-pin-btn,
+  .rdt-sort-icon {
     display: none !important;
-  }
-  .rdt-container {
+    width: 0 !important;
+    min-width: 0 !important;
+    max-width: 0 !important;
+    height: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
     border: none !important;
+    visibility: hidden !important;
+  }
+
+  /* 2. Remove Outer Container Borders, Shadows & Gaps */
+  .rdt-container,
+  .rdt-variant-default,
+  .rdt-variant-bordered,
+  .rdt-variant-minimal,
+  .rdt-variant-striped,
+  .rdt-variant-modern {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
     box-shadow: none !important;
     background: transparent !important;
+    overflow: visible !important;
   }
+
+  /* 3. Remove Scrollbars & MaxHeight Clipping from Wrapper */
+  .rdt-table-wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    max-height: none !important;
+    height: auto !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* 4. Table Layout: Clean, 100% Width, No Gaps */
   .rdt-table {
     width: 100% !important;
     border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    margin: 0 !important;
+    table-layout: auto !important;
+    background-color: #ffffff !important;
   }
-  .rdt-th,
-  .rdt-td {
-    border: 1px solid #000000 !important;
-    padding: 6px 10px !important;
-    color: #000000 !important;
+
+  /* 5. Neutralize Sticky & Pinned Column Offsets (Prevents Left/Right Blank Gaps) */
+  .rdt-pinned-left,
+  .rdt-pinned-right,
+  .rdt-sticky-header .rdt-th,
+  .rdt-sticky-header .rdt-pinned-left,
+  .rdt-sticky-header .rdt-pinned-right {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    top: auto !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+  }
+
+  /* 6. Multi-page Print Handling */
+  .rdt-thead {
+    display: table-header-group !important;
+  }
+
+  .rdt-tbody {
+    display: table-row-group !important;
+  }
+
+  .rdt-tr {
+    display: table-row !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
     background: transparent !important;
   }
+
+  /* 7. Clean, Professional Borders & Compact Padding */
+  .rdt-th,
+  .rdt-td {
+    display: table-cell !important;
+    padding: 6px 10px !important;
+    border: 1px solid #d1d5db !important;
+    color: #111827 !important;
+    font-size: 9.5pt !important;
+    line-height: 1.35 !important;
+    vertical-align: middle !important;
+    background-color: #ffffff !important;
+    box-sizing: border-box !important;
+  }
+
+  .rdt-th {
+    background-color: #f3f4f6 !important;
+    font-weight: 600 !important;
+    font-size: 9pt !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.02em !important;
+    border-bottom: 2px solid #9ca3af !important;
+  }
+
+  /* Zebra striping for striped variant in print */
+  .rdt-variant-striped .rdt-tr:nth-child(even) .rdt-td {
+    background-color: #f9fafb !important;
+  }
+
+  /* Serial Number Column: Compact and Centered */
+  .rdt-th-serial,
+  .rdt-td-serial {
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 50px !important;
+    text-align: center !important;
+    color: #374151 !important;
+    font-weight: 500 !important;
+  }
+
+  /* Avatar in Print: Clean & Sized */
+  .rdt-avatar-img,
+  .rdt-avatar-fallback {
+    width: 24px !important;
+    height: 24px !important;
+    font-size: 9pt !important;
+  }
+
+  .rdt-avatar-cell {
+    gap: 8px !important;
+  }
+
+  /* Badges in Print: Crisp Border & Readable */
+  .rdt-badge {
+    padding: 2px 6px !important;
+    font-size: 8.5pt !important;
+    border: 1px solid currentColor !important;
+  }
+
+  /* Override mobile layout in print to ensure table is always full width table */
+  .rdt-layout-auto .rdt-thead {
+    display: table-header-group !important;
+  }
+  .rdt-layout-auto .rdt-tbody {
+    display: table-row-group !important;
+  }
+  .rdt-layout-auto .rdt-tr {
+    display: table-row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+  .rdt-layout-auto .rdt-td {
+    display: table-cell !important;
+    width: auto !important;
+  }
 }
+

@@ -139,3 +139,9 @@ test('ActionIcons: renders built-in icons for common action keys', async () => {
   assert.match(customHtml, /id="custom"/);
 });
 
+test('DataTable Print: printTable function is exported and accessible', async () => {
+  const { printTable } = await import('../src/utils/exportData');
+  assert.equal(typeof printTable, 'function');
+});
+
+

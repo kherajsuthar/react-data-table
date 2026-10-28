@@ -146,6 +146,7 @@ export function exportToPDF<TData = any>(
  */
 export function printTable(): void {
   if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('rdt-close-all-actions', { detail: { id: null } }));
     window.print();
   }
 }
