@@ -18,6 +18,8 @@ export interface DataTableBodyProps<TData = any> {
   actions?: RowAction<TData>[] | ((row: TData, index: number) => RowAction<TData>[]);
   // Row interaction
   onRowClick?: (row: TData, index: number) => void;
+  onRowContextMenu?: (row: TData, index: number, event: React.MouseEvent) => void;
+  enableContextMenu?: boolean;
   rowClassName?: string | ((row: TData, index: number) => string);
   getPinPosition?: (columnId: string) => ColumnPinPosition;
   // Feedback states
@@ -41,6 +43,8 @@ export const DataTableBody = <TData extends Record<string, any>>({
   pageSize = 10,
   actions,
   onRowClick,
+  onRowContextMenu,
+  enableContextMenu,
   rowClassName,
   getPinPosition,
   loading = false,
@@ -131,6 +135,8 @@ export const DataTableBody = <TData extends Record<string, any>>({
             serialIndex={serialIndex}
             actions={actions}
             onRowClick={onRowClick}
+            onRowContextMenu={onRowContextMenu}
+            enableContextMenu={enableContextMenu}
             rowClassName={rowClassName}
             getPinPosition={getPinPosition}
           />

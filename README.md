@@ -23,7 +23,12 @@ A production-ready, feature-rich, and lightweight React data table library with 
 - 🔢 **Built-in Columns**:
   - Continuous **Serial Number (`#`)** column pinned to the left by default.
   - Floating **Row Selection** checkbox column with indeterminate "Select All" support.
-  - Configurable **Three-Dot Action** column pinned to the right by default with dropdown items, icons, and danger/warning themes.
+  - Configurable **Three-Dot Action & Context Menu**:
+    - Pinned to the right by default with large comfortable click hit area.
+    - **Right-Click Context Menu**: Right-clicking any row opens the menu at cursor position with Windows OS-style smart collision detection (opens down if space exists, flips upwards if bottom is constrained).
+    - **Portal-Rendered**: Zero table scrollbars when opening menus, free from `overflow` clipping.
+    - **No Text Wrapping**: Dropdown items stay cleanly on single lines (`white-space: nowrap`).
+    - **Action Icons**: Built-in SVG icons (`icon: 'view' | 'edit' | 'delete' | 'copy' | 'download' | 'share' | 'print'`) or custom JSX icons.
   - Built-in columns remain fixed and separate from draggable data columns.
 - 🔍 **Debounced Search**:
   - Client-side real-time filtering across all visible fields by default.
@@ -153,10 +158,17 @@ export default function App() {
       actions={[
         {
           label: 'View Profile',
+          icon: 'view',
           onPress: (row) => console.log('Viewing', row.name),
         },
         {
+          label: 'Edit User',
+          icon: 'edit',
+          onPress: (row) => console.log('Editing', row.name),
+        },
+        {
           label: 'Delete User',
+          icon: 'delete',
           color: 'danger',
           onPress: (row) => console.log('Deleting', row.name),
         },

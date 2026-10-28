@@ -79,10 +79,22 @@ export const BasicExample: React.FC = () => {
         actions={[
           {
             label: 'View Details',
+            icon: 'view',
             onPress: (row) => alert(`Viewing ${row.name}`),
           },
           {
-            label: 'Delete',
+            label: 'Edit Product',
+            icon: 'edit',
+            onPress: (row) => alert(`Editing ${row.name}`),
+          },
+          {
+            label: 'Copy Name',
+            icon: 'copy',
+            onPress: (row) => alert(`Copied ${row.name}`),
+          },
+          {
+            label: 'Delete Product',
+            icon: 'delete',
             color: 'danger',
             onPress: (row) => alert(`Deleting ${row.name}`),
           },

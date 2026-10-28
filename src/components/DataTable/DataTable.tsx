@@ -32,8 +32,10 @@ export const DataTable = <TData extends Record<string, any>>(props: DataTablePro
     errorMessage,
     onRetry,
     emptyMessage,
-    // Row click
+    // Row click & context menu
     onRowClick,
+    onRowContextMenu,
+    enableContextMenu,
     rowClassName,
   } = props;
 
@@ -129,6 +131,8 @@ export const DataTable = <TData extends Record<string, any>>(props: DataTablePro
             pageSize={table.pagination.pageSize}
             actions={actions}
             onRowClick={onRowClick}
+            onRowContextMenu={onRowContextMenu}
+            enableContextMenu={enableContextMenu}
             rowClassName={rowClassName}
             getPinPosition={table.getPinPosition}
             loading={loading}

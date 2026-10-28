@@ -113,5 +113,9 @@ export interface DataTableProps<TData = any> {
   headerSlot?: ReactNode;
   footerSlot?: ReactNode;
   onRowClick?: (row: TData, index: number) => void;
+  /** Right-click context menu callback */
+  onRowContextMenu?: (row: TData, index: number, event: React.MouseEvent) => void;
+  /** Enable right-click context menu to trigger row actions (default: true when actions are provided) */
+  enableContextMenu?: boolean;
   rowClassName?: string | ((row: TData, index: number) => string);
 }

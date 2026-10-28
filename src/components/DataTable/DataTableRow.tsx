@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { ColumnDef, ColumnPinPosition, RowAction } from '../../types/column.types';
 import { DataTableCell } from './DataTableCell';
-import { DataTableActions } from './DataTableActions';
+import { DataTableActions, type DataTableActionsHandle } from './DataTableActions';
 import { getColumnId } from '../../utils/getCellValue';
 
 export interface DataTableRowProps<TData = any> {
@@ -15,6 +15,8 @@ export interface DataTableRowProps<TData = any> {
   serialIndex?: number;
   actions?: RowAction<TData>[] | ((row: TData, index: number) => RowAction<TData>[]);
   onRowClick?: (row: TData, index: number) => void;
+  onRowContextMenu?: (row: TData, index: number, event: React.MouseEvent) => void;
+  enableContextMenu?: boolean;
   rowClassName?: string | ((row: TData, index: number) => string);
   getPinPosition?: (columnId: string) => ColumnPinPosition;
 }
@@ -30,9 +32,14 @@ export const DataTableRow = <TData extends Record<string, any>>({
   serialIndex,
   actions,
   onRowClick,
+  onRowContextMenu,
+  enableContextMenu = true,
   rowClassName,
   getPinPosition,
 }: DataTableRowProps<TData>): React.ReactNode => {
+  const rowRef = useRef<HTMLTableRowElement>(null);
+  const actionsRef = useRef<DataTableActionsHandle>(null);
+
   const customRowClass =
     typeof rowClassName === 'function' ? rowClassName(row, rowIndex) : rowClassName || '';
 
@@ -53,10 +60,28 @@ export const DataTableRow = <TData extends Record<string, any>>({
     onRowClick?.(row, rowIndex);
   };
 
+  const handleRowContextMenu = (e: React.MouseEvent) => {
+    onRowContextMenu?.(row, rowIndex, e);
+
+    if (actions && enableContextMenu !== false) {
+      const target = e.target as HTMLElement;
+      // Do not hijack context menu on editable text fields
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      e.preventDefault();
+      e.stopPropagation();
+      actionsRef.current?.openAtCoords(e.clientX, e.clientY);
+    }
+  };
+
   return (
     <tr
+      ref={rowRef}
       className={`rdt-tr ${isSelected ? 'rdt-tr-selected' : ''} ${isClickable ? 'rdt-tr-clickable' : ''} ${customRowClass}`}
       onClick={handleRowClick}
+      onContextMenu={handleRowContextMenu}
     >
       {/* 1. Row Selection Checkbox */}
       {enableRowSelection && (
@@ -110,9 +135,15 @@ export const DataTableRow = <TData extends Record<string, any>>({
       {actions && (
         <td
           className="rdt-td rdt-td-actions rdt-pinned-right"
-          style={{ right: 0, width: 60, textAlign: 'center' }}
+          style={{ right: 0, width: 64, minWidth: 64, textAlign: 'center', padding: '6px 8px' }}
         >
-          <DataTableActions actions={actions} row={row} rowIndex={rowIndex} />
+          <DataTableActions
+            ref={actionsRef}
+            actions={actions}
+            row={row}
+            rowIndex={rowIndex}
+            rowRef={rowRef}
+          />
         </td>
       )}
     </tr>

@@ -17,10 +17,34 @@ export interface BadgeConfig {
   label?: string;
 }
 
+export type ActionIconType =
+  | 'view'
+  | 'eye'
+  | 'show'
+  | 'details'
+  | 'edit'
+  | 'pencil'
+  | 'modify'
+  | 'delete'
+  | 'trash'
+  | 'remove'
+  | 'copy'
+  | 'clone'
+  | 'duplicate'
+  | 'download'
+  | 'export'
+  | 'print'
+  | 'share'
+  | 'info'
+  | 'check'
+  | 'close'
+  | 'link'
+  | 'refresh';
+
 export interface RowAction<TData = any> {
   key?: string;
   label: string;
-  icon?: ReactNode;
+  icon?: ReactNode | ActionIconType | (string & {});
   onPress?: (row: TData, index: number) => void;
   onClick?: (row: TData, index: number) => void;
   color?: 'primary' | 'danger' | 'warning' | 'default' | string;

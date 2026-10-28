@@ -6,3 +6,4 @@ export * from './DataTableCell';
 export * from './DataTableToolbar';
 export * from './DataTablePagination';
 export * from './DataTableActions';
+export * from './ActionIcons';

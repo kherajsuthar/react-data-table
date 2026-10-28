@@ -97,3 +97,45 @@ test('DataTable Utilities: sortRows sorts numbers, dates, and strings correctly'
   assert.equal(sortedDesc[0].name, 'Charlie');
   assert.equal(sortedDesc[2].name, 'Alice');
 });
+
+test('DataTable Actions: renders action trigger with padded hit area and action column', () => {
+  const data = [{ id: 1, name: 'Alice' }];
+  const columns: ColumnDef[] = [{ key: 'name', title: 'Name' }];
+
+  const html = renderToString(
+    <DataTable
+      data={data}
+      columns={columns}
+      actions={[
+        { label: 'View', icon: 'view', onPress: () => {} },
+        { label: 'Edit', icon: 'edit', onPress: () => {} },
+        { label: 'Delete User', icon: 'delete', color: 'danger', onPress: () => {} },
+      ]}
+    />
+  );
+
+  assert.match(html, /rdt-th-actions/);
+  assert.match(html, /rdt-td-actions/);
+  assert.match(html, /rdt-actions-trigger/);
+  assert.match(html, /aria-label="Row actions"/);
+});
+
+test('ActionIcons: renders built-in icons for common action keys', async () => {
+  const { renderActionIcon, ActionIcons } = await import('../src/components/DataTable/ActionIcons');
+
+  const viewIcon = renderActionIcon('view');
+  const editIcon = renderActionIcon('edit');
+  const deleteIcon = renderActionIcon('delete');
+  const customIcon = renderActionIcon(<span id="custom">★</span>);
+
+  const viewHtml = renderToString(<>{viewIcon}</>);
+  const editHtml = renderToString(<>{editIcon}</>);
+  const deleteHtml = renderToString(<>{deleteIcon}</>);
+  const customHtml = renderToString(<>{customIcon}</>);
+
+  assert.match(viewHtml, /<svg/);
+  assert.match(editHtml, /<svg/);
+  assert.match(deleteHtml, /<svg/);
+  assert.match(customHtml, /id="custom"/);
+});
+
