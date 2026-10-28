@@ -71,7 +71,7 @@ export const DataTableHeader = <TData extends Record<string, any>>({
       <tr className="rdt-tr rdt-header-row">
         {/* 1. Select All Checkbox */}
         {enableRowSelection && (
-          <th className="rdt-th rdt-th-selection rdt-pinned-left" style={{ left: 0, width: 44 }}>
+          <th className="rdt-th rdt-th-selection rdt-pinned-left rdt-no-print" style={{ left: 0, width: 44 }}>
             <input
               ref={checkboxRef}
               type="checkbox"
@@ -212,7 +212,7 @@ export const DataTableHeader = <TData extends Record<string, any>>({
         {/* 4. Actions Header */}
         {hasActions && (
           <th
-            className="rdt-th rdt-th-actions rdt-pinned-right"
+            className="rdt-th rdt-th-actions rdt-pinned-right rdt-no-print"
             style={{ right: 0, width: 60, textAlign: 'center' }}
           >
             {actionColumnTitle}

@@ -85,7 +85,7 @@ export const DataTableRow = <TData extends Record<string, any>>({
     >
       {/* 1. Row Selection Checkbox */}
       {enableRowSelection && (
-        <td className="rdt-td rdt-td-selection rdt-pinned-left" style={{ left: 0, width: 44 }}>
+        <td className="rdt-td rdt-td-selection rdt-pinned-left rdt-no-print" style={{ left: 0, width: 44 }}>
           <input
             type="checkbox"
             className="rdt-checkbox"
@@ -134,7 +134,7 @@ export const DataTableRow = <TData extends Record<string, any>>({
       {/* 4. Actions Column */}
       {actions && (
         <td
-          className="rdt-td rdt-td-actions rdt-pinned-right"
+          className="rdt-td rdt-td-actions rdt-pinned-right rdt-no-print"
           style={{ right: 0, width: 64, minWidth: 64, textAlign: 'center', padding: '6px 8px' }}
         >
           <DataTableActions
