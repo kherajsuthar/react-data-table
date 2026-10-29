@@ -7,3 +7,5 @@ export * from './DataTableToolbar';
 export * from './DataTablePagination';
 export * from './DataTableActions';
 export * from './ActionIcons';
+export * from './DataTableCard';
+export * from './DataTableGrid';

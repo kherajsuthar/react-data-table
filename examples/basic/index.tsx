@@ -27,6 +27,8 @@ export const BasicExample: React.FC = () => {
     {
       key: 'name',
       title: 'Product Name',
+      width: 220,
+      pinned: 'left',
       enableSorting: true,
       copy: true,
     },
@@ -61,7 +63,7 @@ export const BasicExample: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24, maxWidth: 1000, margin: '0 auto' }}>
+    <div style={{ padding: '16px', maxWidth: 1000, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
       <h2>Basic DataTable Example</h2>
       <p style={{ color: '#64748b', marginBottom: 16 }}>
         Demonstrates basic usage with search filtering, multi-column sorting, pagination, and copyable cells.

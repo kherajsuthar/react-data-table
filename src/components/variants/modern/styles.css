@@ -49,3 +49,25 @@
   border-top: 1px solid var(--rdt-border);
   padding: 14px 20px;
 }
+
+@media (max-width: 768px) {
+  .rdt-variant-modern .rdt-toolbar {
+    padding: 8px 12px;
+  }
+  .rdt-variant-modern .rdt-th,
+  .rdt-variant-modern .rdt-td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .rdt-variant-modern .rdt-pagination {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rdt-variant-modern .rdt-th,
+  .rdt-variant-modern .rdt-td {
+    padding: 6px 8px;
+    font-size: 11.5px;
+  }
+}

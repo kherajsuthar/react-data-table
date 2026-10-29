@@ -64,3 +64,13 @@
   --rdt-transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --rdt-transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Responsive typography & spacing tokens for mobile/small devices (12px default) */
+@media (max-width: 768px) {
+  :root {
+    --rdt-font-size-xs: 0.6875rem; /* 11px */
+    --rdt-font-size-sm: 0.75rem;   /* 12px */
+    --rdt-font-size-md: 0.8125rem; /* 13px */
+    --rdt-font-size-lg: 0.9375rem; /* 15px */
+  }
+}

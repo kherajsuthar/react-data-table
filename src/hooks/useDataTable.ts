@@ -36,6 +36,9 @@ export interface UseDataTableReturn<TData = any> {
   pinColumn: (columnId: string, position: ColumnPinPosition) => void;
   canPinColumn: (column: ColumnDef<TData>) => boolean;
   getPinPosition: (columnId: string) => ColumnPinPosition;
+  getStickyOffset: (columnId: string) => number | undefined;
+  isLastPinnedLeft: (columnId: string) => boolean;
+  isFirstPinnedRight: (columnId: string) => boolean;
   searchable: boolean;
   searchQuery: string;
   debouncedQuery: string;
@@ -56,14 +59,17 @@ export interface UseDataTableReturn<TData = any> {
   toggleSelectAll: () => void;
   isAllSelected: boolean;
   isPartiallySelected: boolean;
-  exportToCSV: () => void;
-  exportToXLSX: () => void;
-  exportToPDF: () => void;
-  exportToJSON: () => void;
+  exportToCSV: (customFilename?: string) => void;
+  exportToXLSX: (customFilename?: string) => void;
+  exportToPDF: (customFilename?: string) => void;
+  exportToJSON: (customFilename?: string) => void;
   print: () => void;
 }
 
-export function useDataTable<TData = any>(props: DataTableProps<TData>): UseDataTableReturn<TData> {
+export function useDataTable<TData = any>(
+  props: DataTableProps<TData>,
+  containerRef?: React.RefObject<HTMLElement | null>
+): UseDataTableReturn<TData> {
   const {
     data,
     columns: userColumns,
@@ -249,34 +255,62 @@ export function useDataTable<TData = any>(props: DataTableProps<TData>): UseData
     canPinColumn,
     getPinPosition,
     orderedColumns: pinnedDataColumns,
+    getStickyOffset,
+    isLastPinnedLeft,
+    isFirstPinnedRight,
   } = useColumnPinning<TData>({
     columns: activeDataColumns,
     initialPinning: initialPinnedColumns,
+    enableRowSelection,
+    serialNumber: props.serialNumber,
+    hasActions: !!props.actions,
+    pinActions: Boolean(props.pinActions),
   });
 
-  // 8. Export functions
-  const handleExportCSV = useCallback(() => {
-    onExport?.('csv', sortedData);
-    exportToCSV(sortedData, activeDataColumns, exportFileName);
-  }, [sortedData, activeDataColumns, exportFileName, onExport]);
+  // 8. Export functions (exports entire table dataset across all pages)
+  const handleExportCSV = useCallback(
+    (customFilename?: string) => {
+      onExport?.('csv', sortedData);
+      props.onExportCSV?.(sortedData);
+      exportToCSV(sortedData, activeDataColumns, {
+        filename: customFilename || exportFileName,
+        delimiter: props.exportCSVOptions?.delimiter,
+        includeBOM: props.exportCSVOptions?.includeBOM,
+      });
+    },
+    [sortedData, activeDataColumns, exportFileName, onExport, props.onExportCSV, props.exportCSVOptions]
+  );
 
-  const handleExportXLSX = useCallback(() => {
-    onExport?.('xlsx', sortedData);
-    exportToXLSX(sortedData, activeDataColumns, exportFileName);
-  }, [sortedData, activeDataColumns, exportFileName, onExport]);
+  const handleExportXLSX = useCallback(
+    (customFilename?: string) => {
+      onExport?.('xlsx', sortedData);
+      props.onExportXLSX?.(sortedData);
+      exportToXLSX(sortedData, activeDataColumns, customFilename || exportFileName);
+    },
+    [sortedData, activeDataColumns, exportFileName, onExport, props.onExportXLSX]
+  );
 
-  const handleExportPDF = useCallback(() => {
-    onExport?.('pdf', sortedData);
-    exportToPDF(sortedData, activeDataColumns, exportFileName);
-  }, [sortedData, activeDataColumns, exportFileName, onExport]);
+  const handleExportPDF = useCallback(
+    (customFilename?: string) => {
+      onExport?.('pdf', sortedData);
+      props.onExportPDF?.(sortedData);
+      exportToPDF(sortedData, activeDataColumns, customFilename || exportFileName, props.title || 'Table Report');
+    },
+    [sortedData, activeDataColumns, exportFileName, onExport, props.onExportPDF, props.title]
+  );
 
-  const handleExportJSON = useCallback(() => {
-    exportToJSON(sortedData, exportFileName);
-  }, [sortedData, exportFileName]);
+  const handleExportJSON = useCallback(
+    (customFilename?: string) => {
+      onExport?.('json' as any, sortedData);
+      props.onExportJSON?.(sortedData);
+      exportToJSON(sortedData, customFilename || exportFileName);
+    },
+    [sortedData, exportFileName, onExport, props.onExportJSON]
+  );
 
   const handlePrint = useCallback(() => {
-    printTable();
-  }, []);
+    printTable(props.title || 'React Data Table', containerRef?.current);
+  }, [props.title, containerRef]);
 
   return {
     // Data
@@ -309,6 +343,9 @@ export function useDataTable<TData = any>(props: DataTableProps<TData>): UseData
     pinColumn,
     canPinColumn,
     getPinPosition,
+    getStickyOffset,
+    isLastPinnedLeft,
+    isFirstPinnedRight,
     // Search
     searchable,
     searchQuery,

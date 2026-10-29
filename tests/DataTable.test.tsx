@@ -144,4 +144,38 @@ test('DataTable Print: printTable function is exported and accessible', async ()
   assert.equal(typeof printTable, 'function');
 });
 
+test('DataTable Title: renders default "React Data Table" in print-only header', () => {
+  const columns: ColumnDef[] = [{ key: 'id', title: 'ID' }];
+  const data = [{ id: 1 }];
+
+  const html = renderToString(<DataTable data={data} columns={columns} />);
+  assert.match(html, /class="rdt-print-title">React Data Table<\/h1>/);
+  assert.match(html, /class="rdt-print-header rdt-print-only"/);
+});
+
+test('DataTable Title: renders custom title from title prop', () => {
+  const columns: ColumnDef[] = [{ key: 'id', title: 'ID' }];
+  const data = [{ id: 1 }];
+
+  const html = renderToString(<DataTable data={data} columns={columns} title="Employee Attendance Report" />);
+  assert.match(html, /class="rdt-print-title">Employee Attendance Report<\/h1>/);
+});
+
+test('DataTable Responsiveness: renders rdt-responsive class by default', () => {
+  const columns: ColumnDef[] = [{ key: 'id', title: 'ID' }];
+  const data = [{ id: 1 }];
+
+  const html = renderToString(<DataTable data={data} columns={columns} />);
+  assert.match(html, /rdt-responsive/);
+});
+
+test('DataTable Responsiveness: disables rdt-responsive when responsive={false}', () => {
+  const columns: ColumnDef[] = [{ key: 'id', title: 'ID' }];
+  const data = [{ id: 1 }];
+
+  const html = renderToString(<DataTable data={data} columns={columns} responsive={false} />);
+  assert.doesNotMatch(html, /rdt-responsive/);
+});
+
+
 

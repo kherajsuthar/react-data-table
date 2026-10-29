@@ -2,10 +2,13 @@
   display: flex;
   flex-direction: column;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  position: relative;
   font-family: var(--rdt-font-family);
   color: var(--rdt-text-primary);
   background-color: var(--rdt-bg);
-  box-sizing: border-box;
 }
 
 .rdt-container *,
@@ -15,19 +18,46 @@
 }
 
 .rdt-table-wrapper {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   overflow-x: auto;
   position: relative;
   -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: var(--rdt-border) transparent;
+}
+
+.rdt-table-wrapper::-webkit-scrollbar {
+  height: 6px;
+  width: 6px;
+}
+
+.rdt-table-wrapper::-webkit-scrollbar-track {
+  background: var(--rdt-bg-subtle);
+  border-radius: 4px;
+}
+
+.rdt-table-wrapper::-webkit-scrollbar-thumb {
+  background: var(--rdt-border);
+  border-radius: 4px;
+}
+
+.rdt-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: var(--rdt-text-muted);
 }
 
 .rdt-table {
   width: 100%;
+  min-width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   text-align: left;
   font-size: var(--rdt-font-size-sm);
   line-height: 1.5;
+  table-layout: auto;
 }
 
 /* Headings & Cells */
@@ -35,6 +65,7 @@
 .rdt-td {
   padding: 12px 16px;
   vertical-align: middle;
+  white-space: nowrap;
 }
 
 .rdt-th {
@@ -140,25 +171,82 @@
   z-index: 3;
 }
 
-/* Pinned Columns */
+/* Pinned Columns (Sticky Horizontal Position) */
 .rdt-pinned-left,
 .rdt-pinned-right {
-  position: sticky;
+  position: sticky !important;
   z-index: 2;
-  background-color: inherit;
+  box-sizing: border-box;
 }
 
-.rdt-sticky-header .rdt-pinned-left,
-.rdt-sticky-header .rdt-pinned-right {
+/* 1. Header Pinned Cells (Solid opaque background) */
+.rdt-th.rdt-pinned-left,
+.rdt-th.rdt-pinned-right {
   z-index: 4;
+  background-color: var(--rdt-bg-muted, #f8fafc) !important;
 }
 
-.rdt-pinned-left {
-  box-shadow: 2px 0 4px -2px rgba(0, 0, 0, 0.08);
+.rdt-sticky-header .rdt-th.rdt-pinned-left,
+.rdt-sticky-header .rdt-th.rdt-pinned-right {
+  z-index: 6;
+  background-color: var(--rdt-bg-muted, #f8fafc) !important;
 }
 
-.rdt-pinned-right {
-  box-shadow: -2px 0 4px -2px rgba(0, 0, 0, 0.08);
+/* 2. Body Pinned Cells (Solid opaque background - scrolling content will NEVER show through) */
+.rdt-td.rdt-pinned-left,
+.rdt-td.rdt-pinned-right {
+  background-color: var(--rdt-bg, #ffffff) !important;
+}
+
+/* Striped variant even rows */
+.rdt-variant-striped .rdt-tbody .rdt-tr:nth-child(even) .rdt-td.rdt-pinned-left,
+.rdt-variant-striped .rdt-tbody .rdt-tr:nth-child(even) .rdt-td.rdt-pinned-right {
+  background-color: var(--rdt-bg-muted, #f8fafc) !important;
+}
+
+/* Striped variant odd rows */
+.rdt-variant-striped .rdt-tbody .rdt-tr:nth-child(odd) .rdt-td.rdt-pinned-left,
+.rdt-variant-striped .rdt-tbody .rdt-tr:nth-child(odd) .rdt-td.rdt-pinned-right {
+  background-color: var(--rdt-bg, #ffffff) !important;
+}
+
+/* Hover state on rows for pinned cells */
+.rdt-tr:hover .rdt-td.rdt-pinned-left,
+.rdt-tr:hover .rdt-td.rdt-pinned-right {
+  background-color: var(--rdt-bg-hover, var(--rdt-bg-subtle, #f1f5f9)) !important;
+}
+
+/* Selected row state for pinned cells */
+.rdt-tr-selected .rdt-td.rdt-pinned-left,
+.rdt-tr-selected .rdt-td.rdt-pinned-right {
+  background-color: var(--rdt-bg-selected, #eff6ff) !important;
+}
+
+/* Variant-specific header backgrounds for pinned headers */
+.rdt-variant-modern .rdt-th.rdt-pinned-left,
+.rdt-variant-modern .rdt-th.rdt-pinned-right {
+  background-color: #f8fafc !important;
+}
+
+.rdt-variant-minimal .rdt-th.rdt-pinned-left,
+.rdt-variant-minimal .rdt-th.rdt-pinned-right {
+  background-color: var(--rdt-bg, #ffffff) !important;
+}
+
+.rdt-variant-striped .rdt-th.rdt-pinned-left,
+.rdt-variant-striped .rdt-th.rdt-pinned-right {
+  background-color: var(--rdt-bg-subtle, #f1f5f9) !important;
+}
+
+/* Edge shadow & divider on last pinned left and first pinned right columns */
+.rdt-pinned-last-left {
+  box-shadow: 3px 0 6px -2px rgba(0, 0, 0, 0.12) !important;
+  border-right: 1px solid var(--rdt-border-subtle, #e2e8f0) !important;
+}
+
+.rdt-pinned-first-right {
+  box-shadow: -3px 0 6px -2px rgba(0, 0, 0, 0.12) !important;
+  border-left: 1px solid var(--rdt-border-subtle, #e2e8f0) !important;
 }
 
 /* Size Variants */
@@ -208,6 +296,282 @@
   .rdt-layout-auto .rdt-td:last-child {
     border-bottom: none;
   }
+}
+
+/* =========================================================================
+   Responsive Mobile Table (High-Density 12px Typography & Compact View)
+   ========================================================================= */
+@media (max-width: 768px) {
+  .rdt-table-wrapper {
+    overflow-x: auto !important;
+    display: block !important;
+    -webkit-overflow-scrolling: touch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .rdt-table {
+    width: 100%;
+    min-width: 100%;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+
+  /* Compact 12px cells on small screens */
+  .rdt-th,
+  .rdt-td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+
+  .rdt-th {
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+
+  .rdt-th-content {
+    gap: 6px;
+  }
+
+  .rdt-sort-icon {
+    width: 12px;
+    height: 12px;
+  }
+
+  .rdt-pin-btn {
+    padding: 1px 3px;
+  }
+
+  .rdt-pin-btn svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .rdt-drag-handle svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Compact Selection, Serial, and Actions columns on mobile */
+  .rdt-th.rdt-th-selection,
+  .rdt-td.rdt-td-selection {
+    padding: 6px 8px;
+  }
+
+  .rdt-th.rdt-th-serial,
+  .rdt-td.rdt-td-serial {
+    padding: 6px 6px;
+    font-size: 11px;
+  }
+
+  .rdt-th.rdt-th-actions,
+  .rdt-td.rdt-td-actions {
+    padding: 4px 6px;
+  }
+
+  /* Responsive Size Variants */
+  .rdt-size-sm .rdt-th,
+  .rdt-size-sm .rdt-td {
+    padding: 6px 8px;
+    font-size: 11px;
+  }
+
+  .rdt-size-lg .rdt-th,
+  .rdt-size-lg .rdt-td {
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+
+  .rdt-layout-compact .rdt-th,
+  .rdt-layout-compact .rdt-td {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+}
+
+/* Extra-small mobile screens (<= 480px) */
+@media (max-width: 480px) {
+  .rdt-table {
+    font-size: 11.5px;
+  }
+
+  .rdt-th,
+  .rdt-td {
+    padding: 6px 8px;
+    font-size: 11.5px;
+  }
+
+  .rdt-th {
+    font-size: 11px;
+  }
+
+  .rdt-th.rdt-th-selection,
+  .rdt-td.rdt-td-selection {
+    padding: 4px 6px;
+  }
+
+  .rdt-th.rdt-th-serial,
+  .rdt-td.rdt-td-serial {
+    padding: 4px;
+    font-size: 10.5px;
+  }
+
+  .rdt-th.rdt-th-actions,
+  .rdt-td.rdt-td-actions {
+    padding: 3px 4px;
+  }
+}
+
+/* =========================================================================
+   Card / Grid View Styles (Column / Card Mode)
+   ========================================================================= */
+.rdt-cards-grid {
+  display: grid;
+  width: 100%;
+  padding: 16px;
+  box-sizing: border-box;
+  background-color: var(--rdt-bg);
+}
+
+@media (max-width: 640px) {
+  .rdt-cards-grid {
+    grid-template-columns: repeat(var(--rdt-grid-cols-sm, 1), minmax(0, 1fr)) !important;
+    padding: 12px;
+    gap: 12px;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .rdt-cards-grid {
+    grid-template-columns: repeat(var(--rdt-grid-cols-md, 2), minmax(0, 1fr));
+  }
+}
+
+/* Card item */
+.rdt-card {
+  background-color: var(--rdt-bg);
+  border: 1px solid var(--rdt-border);
+  border-radius: var(--rdt-radius-lg, 10px);
+  padding: 16px;
+  box-shadow: var(--rdt-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: transform var(--rdt-transition-fast), box-shadow var(--rdt-transition-fast), border-color var(--rdt-transition-fast);
+  position: relative;
+  box-sizing: border-box;
+}
+
+.rdt-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--rdt-shadow-md);
+  border-color: var(--rdt-border-focus, #94a3b8);
+}
+
+.rdt-card-clickable {
+  cursor: pointer;
+}
+
+.rdt-card-selected {
+  border-color: var(--rdt-primary) !important;
+  background-color: rgba(37, 99, 235, 0.04) !important;
+  box-shadow: 0 0 0 1px var(--rdt-primary) !important;
+}
+
+/* Card Header */
+.rdt-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--rdt-border-subtle);
+}
+
+.rdt-card-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.rdt-card-header-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.rdt-card-serial {
+  font-size: var(--rdt-font-size-xs);
+  font-weight: 600;
+  color: var(--rdt-text-muted);
+  background-color: var(--rdt-bg-muted);
+  padding: 2px 7px;
+  border-radius: var(--rdt-radius-full);
+  line-height: 1.2;
+}
+
+.rdt-card-primary-title {
+  font-weight: 600;
+  font-size: var(--rdt-font-size-md, 14px);
+  color: var(--rdt-text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.rdt-card-actions {
+  display: flex;
+  align-items: center;
+}
+
+/* Card Body */
+.rdt-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rdt-card-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: var(--rdt-font-size-sm);
+  padding: 2px 0;
+}
+
+.rdt-card-label {
+  color: var(--rdt-text-secondary);
+  font-size: var(--rdt-font-size-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  flex-shrink: 0;
+}
+
+.rdt-card-value {
+  color: var(--rdt-text-primary);
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.rdt-custom-card-wrapper {
+  display: flex;
+  flex-direction: column;
+}
+
+.rdt-grid-state {
+  grid-column: 1 / -1;
+  padding: 48px 16px;
+  text-align: center;
+  width: 100%;
 }
 
 .rdt-layout-card .rdt-thead {
@@ -281,7 +645,12 @@
   }
 }
 
-/* Clean & Compact Print Layout (No Unwanted Gaps, No Selection Checkboxes) */
+/* Print-only element hidden on regular screen */
+.rdt-print-only {
+  display: none !important;
+}
+
+/* Clean & Compact Print Layout (Full Width, Smaller Headings, No Selection/Actions/Variant Switchers) */
 @media print {
   @page {
     margin: 10mm;
@@ -295,10 +664,34 @@
     padding: 0 !important;
     background: #ffffff !important;
     color: #111827 !important;
-    font-size: 9pt !important;
-    line-height: 1.35 !important;
+    font-size: 8pt !important;
+    line-height: 1.3 !important;
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
+  }
+
+  /* Print Header with Table Title */
+  .rdt-print-only {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: baseline !important;
+    margin-bottom: 6px !important;
+    padding-bottom: 4px !important;
+    border-bottom: 1.5px solid #d1d5db !important;
+    width: 100% !important;
+  }
+
+  .rdt-print-title {
+    font-size: 11pt !important;
+    font-weight: 700 !important;
+    color: #111827 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .rdt-print-date {
+    font-size: 7.5pt !important;
+    color: #6b7280 !important;
   }
 
   /* 1. 100% Width Layout Containers */
@@ -369,11 +762,11 @@
   .rdt-th,
   .rdt-td {
     display: table-cell !important;
-    padding: 5px 8px !important;
+    padding: 4px 6px !important;
     border: 1px solid #d1d5db !important;
     color: #111827 !important;
-    font-size: 8.5pt !important;
-    line-height: 1.3 !important;
+    font-size: 7.5pt !important;
+    line-height: 1.25 !important;
     vertical-align: middle !important;
     background-color: #ffffff !important;
     box-sizing: border-box !important;
@@ -385,25 +778,29 @@
   .rdt-th {
     background-color: #f3f4f6 !important;
     font-weight: 600 !important;
-    font-size: 8pt !important;
+    font-size: 7.5pt !important;
     text-transform: uppercase !important;
-    letter-spacing: 0.03em !important;
+    letter-spacing: 0.02em !important;
     color: #374151 !important;
     border-bottom: 1.5px solid #9ca3af !important;
   }
 
+  .rdt-td {
+    font-size: 8pt !important;
+  }
+
   /* Document / Slot Headings */
   h1 {
-    font-size: 13pt !important;
-    margin: 0 0 6px 0 !important;
-  }
-  h2 {
     font-size: 11pt !important;
     margin: 0 0 4px 0 !important;
   }
-  h3 {
-    font-size: 10pt !important;
+  h2 {
+    font-size: 9.5pt !important;
     margin: 0 0 3px 0 !important;
+  }
+  h3 {
+    font-size: 8.5pt !important;
+    margin: 0 0 2px 0 !important;
   }
 
   /* Zebra striping for striped variant in print */
@@ -414,13 +811,13 @@
   /* Serial Number Column: Compact and Centered */
   .rdt-th.rdt-th-serial,
   .rdt-td.rdt-td-serial {
-    width: 36px !important;
-    min-width: 36px !important;
-    max-width: 44px !important;
+    width: 32px !important;
+    min-width: 32px !important;
+    max-width: 40px !important;
     text-align: center !important;
     color: #374151 !important;
     font-weight: 500 !important;
-    padding: 4px 6px !important;
+    padding: 4px !important;
   }
 
   /* Avatar in Print: Clean & Sized */
@@ -541,7 +938,18 @@
   .rdt-copy-btn,
   .rdt-drag-handle,
   .rdt-pin-btn,
-  .rdt-sort-icon {
+  .rdt-sort-icon,
+  button,
+  .rdt-btn,
+  .rdt-header-slot button,
+  .rdt-footer-slot button,
+  [class*="variant-selector"],
+  [class*="variant-picker"],
+  [class*="choose-variant"],
+  [class*="variant-tabs"],
+  [class*="variant-switch"],
+  [id*="variant"],
+  [id*="choose"] {
     display: none !important;
     visibility: hidden !important;
     width: 0 !important;

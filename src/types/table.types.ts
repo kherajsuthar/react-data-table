@@ -19,6 +19,25 @@ export interface ColumnPinningState {
 
 export type RowSelectionState = Record<string | number, boolean>;
 
+export type ViewMode = 'table' | 'grid' | 'list' | 'card' | 'row' | 'column';
+
+export interface GridColumnsResponsive {
+  xs?: number;
+  sm?: number;
+  md?: number;
+  lg?: number;
+  xl?: number;
+}
+
+export interface CardHelpers<TData = any> {
+  isSelected: boolean;
+  toggleSelect: () => void;
+  actions?: RowAction<TData>[];
+  serialNumber?: number;
+  columns: ColumnDef<TData>[];
+  rowIndex: number;
+}
+
 export interface TableState {
   searchQuery: string;
   sorting: SortConfig[];
@@ -42,12 +61,16 @@ export interface DataTableProps<TData = any> {
   layout?: TableLayout;
   /** Enable sticky table header */
   stickyHeader?: boolean;
+  /** Whether the table should automatically adapt typography (12px on mobile) and cell padding for small screens @default true */
+  responsive?: boolean;
   /** Maximum height for scrollable table container */
   maxHeight?: number | string;
   /** Custom wrapper CSS class */
   className?: string;
   /** Custom wrapper styles */
   style?: CSSProperties;
+  /** Table title displayed in header and used for print export (default: "React Data Table") */
+  title?: string;
 
   // Search & Filtering
   searchable?: boolean;
@@ -79,6 +102,8 @@ export interface DataTableProps<TData = any> {
   serialNumberTitle?: ReactNode;
   actions?: RowAction<TData>[] | ((row: TData, index: number) => RowAction<TData>[]);
   actionColumnTitle?: ReactNode;
+  /** Whether the action column should be pinned to the right @default false (scrolls horizontally with table) */
+  pinActions?: boolean;
   onRowAction?: (actionKey: string, row: TData, index: number) => void;
 
   // Column Management
@@ -98,7 +123,23 @@ export interface DataTableProps<TData = any> {
   enableExport?: boolean;
   exportFileName?: string;
   enablePrint?: boolean;
-  onExport?: (type: 'csv' | 'xlsx' | 'pdf', data: TData[]) => void;
+  onExport?: (type: 'csv' | 'xlsx' | 'pdf' | 'json', data: TData[]) => void;
+  /** Specific callback fired when CSV export is triggered */
+  onExportCSV?: (data: TData[]) => void;
+  /** Specific callback fired when XLSX export is triggered */
+  onExportXLSX?: (data: TData[]) => void;
+  /** Specific callback fired when PDF export is triggered */
+  onExportPDF?: (data: TData[]) => void;
+  /** Specific callback fired when JSON export is triggered */
+  onExportJSON?: (data: TData[]) => void;
+  /**
+   * Export formats to show in toolbar (e.g. ['csv', 'xlsx', 'pdf', 'json']).
+   * If a single format is provided (e.g. ['csv']), a direct 1-click export button is rendered.
+   * @default ['csv', 'xlsx', 'pdf']
+   */
+  exportFormats?: ('csv' | 'xlsx' | 'pdf' | 'json')[];
+  /** Custom CSV export options */
+  exportCSVOptions?: { delimiter?: string; includeBOM?: boolean };
 
   // Feedback States
   loading?: boolean;
@@ -118,4 +159,30 @@ export interface DataTableProps<TData = any> {
   /** Enable right-click context menu to trigger row actions (default: true when actions are provided) */
   enableContextMenu?: boolean;
   rowClassName?: string | ((row: TData, index: number) => string);
+
+  // View Modes (Table vs Card/Grid)
+  /**
+   * View mode: 'table' (or 'list', 'row') for standard table rows,
+   * or 'grid' (or 'card', 'column') for card grid view.
+   * @default 'table'
+   */
+  viewMode?: ViewMode;
+  /** Initial view mode when uncontrolled @default 'table' */
+  defaultViewMode?: ViewMode;
+  /** Callback fired when view mode changes */
+  onViewModeChange?: (mode: 'table' | 'grid') => void;
+  /** Enable toggle button in toolbar to switch between table and card/grid view @default true */
+  enableViewModeToggle?: boolean;
+  /** Custom card renderer for grid/card view mode */
+  renderCard?: (row: TData, index: number, helpers: CardHelpers<TData>) => ReactNode;
+  /** Minimum width for cards in grid mode (e.g. 280 or '280px') @default '280px' */
+  cardMinWidth?: number | string;
+  /** Gap between cards in grid mode (e.g. 16 or '16px') @default '16px' */
+  gridGap?: number | string;
+  /** Fixed number of columns or responsive column configuration (e.g. 3 or { sm: 1, md: 2, lg: 3 }) */
+  gridColumns?: number | GridColumnsResponsive;
+  /** Custom class name for card elements */
+  cardClassName?: string | ((row: TData, index: number) => string);
+  /** Custom style for card elements */
+  cardStyle?: CSSProperties | ((row: TData, index: number) => CSSProperties);
 }

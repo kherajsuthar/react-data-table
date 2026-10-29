@@ -14,11 +14,15 @@ export interface DataTableRowProps<TData = any> {
   serialNumber?: boolean;
   serialIndex?: number;
   actions?: RowAction<TData>[] | ((row: TData, index: number) => RowAction<TData>[]);
+  pinActions?: boolean;
   onRowClick?: (row: TData, index: number) => void;
   onRowContextMenu?: (row: TData, index: number, event: React.MouseEvent) => void;
   enableContextMenu?: boolean;
   rowClassName?: string | ((row: TData, index: number) => string);
   getPinPosition?: (columnId: string) => ColumnPinPosition;
+  getStickyOffset?: (columnId: string) => number | undefined;
+  isLastPinnedLeft?: (columnId: string) => boolean;
+  isFirstPinnedRight?: (columnId: string) => boolean;
 }
 
 export const DataTableRow = <TData extends Record<string, any>>({
@@ -31,11 +35,15 @@ export const DataTableRow = <TData extends Record<string, any>>({
   serialNumber = false,
   serialIndex,
   actions,
+  pinActions = false,
   onRowClick,
   onRowContextMenu,
   enableContextMenu = true,
   rowClassName,
   getPinPosition,
+  getStickyOffset,
+  isLastPinnedLeft,
+  isFirstPinnedRight,
 }: DataTableRowProps<TData>): React.ReactNode => {
   const rowRef = useRef<HTMLTableRowElement>(null);
   const actionsRef = useRef<DataTableActionsHandle>(null);
@@ -85,7 +93,12 @@ export const DataTableRow = <TData extends Record<string, any>>({
     >
       {/* 1. Row Selection Checkbox */}
       {enableRowSelection && (
-        <td className="rdt-td rdt-td-selection rdt-pinned-left rdt-no-print" style={{ left: 0, width: 44 }}>
+        <td
+          className={`rdt-td rdt-td-selection rdt-pinned-left rdt-no-print ${
+            isLastPinnedLeft?.('__rdt_selection') ? 'rdt-pinned-last-left' : ''
+          }`}
+          style={{ left: 0, width: 44, minWidth: 44 }}
+        >
           <input
             type="checkbox"
             className="rdt-checkbox"
@@ -102,10 +115,13 @@ export const DataTableRow = <TData extends Record<string, any>>({
       {/* 2. Serial Number Column */}
       {serialNumber && (
         <td
-          className="rdt-td rdt-td-serial rdt-pinned-left"
+          className={`rdt-td rdt-td-serial rdt-pinned-left ${
+            isLastPinnedLeft?.('__rdt_serial') ? 'rdt-pinned-last-left' : ''
+          }`}
           style={{
             left: enableRowSelection ? 44 : 0,
             width: 56,
+            minWidth: 56,
             textAlign: 'center',
             color: 'var(--rdt-text-muted)',
             fontWeight: 500,
@@ -119,6 +135,9 @@ export const DataTableRow = <TData extends Record<string, any>>({
       {columns.map((column, colIdx) => {
         const colId = getColumnId(column, colIdx);
         const pin = getPinPosition ? getPinPosition(colId) : false;
+        const stickyOffset = getStickyOffset ? getStickyOffset(colId) : undefined;
+        const isLastLeft = isLastPinnedLeft ? isLastPinnedLeft(colId) : false;
+        const isFirstRight = isFirstPinnedRight ? isFirstPinnedRight(colId) : false;
 
         return (
           <DataTableCell
@@ -127,6 +146,9 @@ export const DataTableRow = <TData extends Record<string, any>>({
             row={row}
             rowIndex={rowIndex}
             pinPosition={pin}
+            stickyOffset={stickyOffset}
+            isLastPinnedLeft={isLastLeft}
+            isFirstPinnedRight={isFirstRight}
           />
         );
       })}
@@ -134,8 +156,16 @@ export const DataTableRow = <TData extends Record<string, any>>({
       {/* 4. Actions Column */}
       {actions && (
         <td
-          className="rdt-td rdt-td-actions rdt-pinned-right rdt-no-print"
-          style={{ right: 0, width: 64, minWidth: 64, textAlign: 'center', padding: '6px 8px' }}
+          className={`rdt-td rdt-td-actions rdt-no-print ${
+            pinActions ? `rdt-pinned-right ${isFirstPinnedRight?.('__rdt_actions') ? 'rdt-pinned-first-right' : ''}` : ''
+          }`}
+          style={{
+            width: 64,
+            minWidth: 64,
+            textAlign: 'center',
+            padding: '6px 8px',
+            ...(pinActions ? { right: 0 } : {}),
+          }}
         >
           <DataTableActions
             ref={actionsRef}

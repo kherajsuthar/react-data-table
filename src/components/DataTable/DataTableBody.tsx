@@ -16,12 +16,16 @@ export interface DataTableBodyProps<TData = any> {
   pageSize?: number;
   // Actions
   actions?: RowAction<TData>[] | ((row: TData, index: number) => RowAction<TData>[]);
+  pinActions?: boolean;
   // Row interaction
   onRowClick?: (row: TData, index: number) => void;
   onRowContextMenu?: (row: TData, index: number, event: React.MouseEvent) => void;
   enableContextMenu?: boolean;
   rowClassName?: string | ((row: TData, index: number) => string);
   getPinPosition?: (columnId: string) => ColumnPinPosition;
+  getStickyOffset?: (columnId: string) => number | undefined;
+  isLastPinnedLeft?: (columnId: string) => boolean;
+  isFirstPinnedRight?: (columnId: string) => boolean;
   // Feedback states
   loading?: boolean;
   loadingMessage?: React.ReactNode;
@@ -42,11 +46,15 @@ export const DataTableBody = <TData extends Record<string, any>>({
   pageIndex = 0,
   pageSize = 10,
   actions,
+  pinActions = false,
   onRowClick,
   onRowContextMenu,
   enableContextMenu,
   rowClassName,
   getPinPosition,
+  getStickyOffset,
+  isLastPinnedLeft,
+  isFirstPinnedRight,
   loading = false,
   loadingMessage = 'Loading data...',
   error = null,
@@ -134,11 +142,15 @@ export const DataTableBody = <TData extends Record<string, any>>({
             serialNumber={serialNumber}
             serialIndex={serialIndex}
             actions={actions}
+            pinActions={pinActions}
             onRowClick={onRowClick}
             onRowContextMenu={onRowContextMenu}
             enableContextMenu={enableContextMenu}
             rowClassName={rowClassName}
             getPinPosition={getPinPosition}
+            getStickyOffset={getStickyOffset}
+            isLastPinnedLeft={isLastPinnedLeft}
+            isFirstPinnedRight={isFirstPinnedRight}
           />
         );
       })}

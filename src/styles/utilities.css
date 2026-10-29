@@ -7,6 +7,9 @@
   padding: 12px 16px;
   border-bottom: 1px solid var(--rdt-border);
   flex-wrap: wrap;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .rdt-toolbar-left,
@@ -15,6 +18,8 @@
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
+  max-width: 100%;
+  min-width: 0;
 }
 
 /* Search input */
@@ -22,6 +27,8 @@
   position: relative;
   display: flex;
   align-items: center;
+  max-width: 100%;
+  min-width: 0;
 }
 
 .rdt-search-icon {
@@ -42,7 +49,10 @@
   border-radius: var(--rdt-radius-md);
   outline: none;
   transition: border-color var(--rdt-transition-fast), box-shadow var(--rdt-transition-fast);
-  min-width: 240px;
+  width: 240px;
+  max-width: 100%;
+  min-width: 120px;
+  box-sizing: border-box;
 }
 
 .rdt-search-input:focus {
@@ -607,3 +617,290 @@
 .rdt-align-left { text-align: left; }
 .rdt-align-center { text-align: center; }
 .rdt-align-right { text-align: right; }
+
+/* View Mode Switcher (List vs Cards) */
+.rdt-view-mode-toggle {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--rdt-bg-muted);
+  padding: 2px;
+  border-radius: var(--rdt-radius-md);
+  border: 1px solid var(--rdt-border);
+  gap: 2px;
+}
+
+.rdt-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 9px;
+  font-size: var(--rdt-font-size-xs);
+  font-weight: 500;
+  color: var(--rdt-text-secondary);
+  background: transparent;
+  border: none;
+  border-radius: calc(var(--rdt-radius-md) - 2px);
+  cursor: pointer;
+  transition: all var(--rdt-transition-fast);
+  line-height: 1;
+}
+
+.rdt-view-btn:hover {
+  color: var(--rdt-text-primary);
+  background-color: var(--rdt-bg-subtle);
+}
+
+.rdt-view-btn-active {
+  background-color: var(--rdt-bg) !important;
+  color: var(--rdt-primary) !important;
+  box-shadow: var(--rdt-shadow-sm);
+  font-weight: 600;
+}
+
+.rdt-view-btn-label {
+  display: inline-block;
+}
+
+/* =========================================================================
+   Responsive Mobile Utilities (Toolbar, Controls, Pagination & Cells)
+   ========================================================================= */
+@media (max-width: 768px) {
+  /* Toolbar & Buttons */
+  .rdt-toolbar {
+    padding: 8px 12px;
+    gap: 8px;
+  }
+
+  .rdt-btn {
+    padding: 5px 10px;
+    font-size: 12px;
+    height: 32px;
+    gap: 5px;
+  }
+
+  .rdt-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .rdt-search-wrapper {
+    min-width: 0;
+  }
+
+  .rdt-search-input {
+    height: 32px;
+    padding: 5px 26px 5px 28px;
+    font-size: 12px;
+    width: 200px;
+  }
+
+  .rdt-search-icon {
+    left: 8px;
+  }
+
+  .rdt-search-icon svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .rdt-view-mode-toggle {
+    padding: 2px;
+  }
+
+  .rdt-view-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    gap: 4px;
+  }
+
+  /* Pagination */
+  .rdt-pagination {
+    padding: 8px 12px;
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .rdt-pagination-info {
+    font-size: 12px;
+    gap: 6px;
+  }
+
+  .rdt-select {
+    padding: 4px 22px 4px 8px;
+    font-size: 12px;
+    height: 28px;
+  }
+
+  .rdt-pagination-btn {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 4px;
+    font-size: 12px;
+  }
+
+  .rdt-pagination-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+
+  .rdt-pagination-dots {
+    padding: 0 3px;
+    font-size: 12px;
+  }
+
+  /* Cell Items */
+  .rdt-badge {
+    font-size: 11px;
+    padding: 1.5px 6px;
+    gap: 4px;
+  }
+
+  .rdt-badge-dot {
+    width: 5px;
+    height: 5px;
+  }
+
+  .rdt-avatar-wrapper {
+    width: 28px;
+    height: 28px;
+  }
+
+  .rdt-avatar-fallback {
+    font-size: 11px;
+  }
+
+  .rdt-avatar-title {
+    font-size: 12px;
+  }
+
+  .rdt-avatar-cell {
+    gap: 7px;
+  }
+
+  .rdt-cell-description {
+    font-size: 11px;
+  }
+
+  .rdt-date-main {
+    font-size: 12px;
+  }
+
+  .rdt-actions-trigger {
+    width: 28px;
+    height: 28px;
+    min-width: 28px;
+    min-height: 28px;
+    padding: 5px;
+  }
+
+  .rdt-actions-trigger svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  .rdt-actions-menu {
+    min-width: 130px;
+    max-width: 85vw;
+    font-size: 12px;
+  }
+
+  .rdt-action-item {
+    padding: 6px 10px;
+    font-size: 12px;
+    gap: 7px;
+  }
+
+  .rdt-checkbox {
+    width: 15px;
+    height: 15px;
+  }
+
+  .rdt-copy-btn {
+    padding: 1px;
+  }
+
+  .rdt-copy-btn svg {
+    width: 12px;
+    height: 12px;
+  }
+}
+
+/* Compact mobile screens (<= 640px) */
+@media (max-width: 640px) {
+  .rdt-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 8px 10px;
+    gap: 8px;
+  }
+
+  .rdt-toolbar-left,
+  .rdt-toolbar-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .rdt-search-wrapper {
+    width: 100%;
+  }
+
+  .rdt-search-input {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+
+  .rdt-toolbar-right {
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: flex-start;
+  }
+
+  .rdt-view-btn-label {
+    display: none;
+  }
+
+  .rdt-pagination {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 10px;
+  }
+
+  .rdt-pagination-info {
+    width: 100%;
+    justify-content: space-between;
+    font-size: 11.5px;
+    flex-wrap: wrap;
+  }
+
+  .rdt-pagination-controls {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
+
+/* Extra-small mobile screens (<= 480px) */
+@media (max-width: 480px) {
+  .rdt-btn {
+    padding: 4px 8px;
+    font-size: 11.5px;
+  }
+
+  .rdt-pagination-info {
+    font-size: 11px;
+  }
+
+  .rdt-select {
+    font-size: 11px;
+    height: 26px;
+    padding: 3px 20px 3px 6px;
+  }
+
+  .rdt-pagination-btn {
+    min-width: 26px;
+    height: 26px;
+    font-size: 11px;
+  }
+}
+

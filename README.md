@@ -246,20 +246,38 @@ Connect directly to your backend API:
 
 ## 📥 Exporting & Printing
 
-Export buttons are included in the toolbar by default:
-- **Excel (.xlsx)**: Exports real binary spreadsheets.
-- **PDF**: Landscape formatted document with header titles and timestamps.
-- **CSV**: RFC-compliant CSV with visible columns.
-- **Print**: Opens print dialog formatted with `@media print`.
+Export options are available in the table toolbar by default:
+- **CSV (.csv)**: RFC 4180-compliant CSV containing the entire table dataset (all rows across all pages) with UTF-8 BOM (`\uFEFF`) for 100% compatibility in Microsoft Excel, Google Sheets, and LibreOffice.
+- **Excel (.xlsx)**: Binary spreadsheet workbook.
+- **PDF (.pdf)**: Landscape formatted document with header titles and timestamps.
+- **Print**: Isolated print layout formatted with `@media print`.
 
-You can also trigger exports programmatically using utility functions:
+### Export Customization
 
 ```tsx
-import { exportToXLSX, exportToPDF, exportToCSV, printTable } from 'react-data-table';
+// 1. Direct single-click CSV button in toolbar:
+<DataTable data={data} columns={columns} exportFormats={['csv']} />
 
-exportToXLSX(data, columns, 'custom-report.xlsx');
-exportToPDF(data, columns, 'custom-report.pdf', 'Executive Report');
-printTable();
+// 2. Custom filename & export callback:
+<DataTable
+  data={data}
+  columns={columns}
+  enableExport={true}
+  exportFileName="all-users"
+  onExportCSV={(rows) => console.log('Exported full table rows:', rows.length)}
+/>
+
+// 3. Programmatic export:
+import { exportToCSV, exportToXLSX, exportToPDF, generateCSVContent, printTable } from 'react-data-table';
+
+// Trigger download for entire table data
+exportToCSV(data, columns, 'all-users.csv');
+exportToXLSX(data, columns, 'all-users.xlsx');
+exportToPDF(data, columns, 'all-users.pdf', 'Executive Report');
+printTable('Company Directory');
+
+// Or get the raw CSV string:
+const csvText = generateCSVContent(data, columns);
 ```
 
 ---

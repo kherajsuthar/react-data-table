@@ -66,14 +66,14 @@ export const AllVariantsExample: React.FC = () => {
   const variants: TableVariant[] = ['default', 'bordered', 'minimal', 'striped', 'modern'];
 
   return (
-    <div style={{ padding: 24, maxWidth: 1000, margin: '0 auto' }}>
+    <div style={{ padding: '16px', maxWidth: 1000, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
       <h2>All 5 Table Variants</h2>
       <p style={{ color: '#64748b', marginBottom: 20 }}>
         The exact same functionality, props, and operations exist across all 5 visual variants.
       </p>
 
       {/* Variant Selector Tabs */}
-      <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+      <div className="variant-tabs choose-variant" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 20 }}>
         {variants.map((v) => (
           <button
             key={v}
@@ -97,6 +97,7 @@ export const AllVariantsExample: React.FC = () => {
 
       {/* Render Table with Selected Variant */}
       <DataTable
+        title="Customer Directory"
         data={mockCustomers}
         columns={columns}
         variant={selectedVariant}

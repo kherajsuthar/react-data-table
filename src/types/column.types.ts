@@ -33,6 +33,9 @@ export type ActionIconType =
   | 'duplicate'
   | 'download'
   | 'export'
+  | 'csv'
+  | 'excel'
+  | 'pdf'
   | 'print'
   | 'share'
   | 'info'
@@ -96,6 +99,12 @@ export interface ColumnDef<TData = any, TValue = any> {
   pinned?: boolean | 'left' | 'right';
   /** Custom cell render function */
   render?: (value: TValue, row: TData, index: number) => ReactNode;
+  /** Whether column is included in data exports (CSV, XLSX, PDF). Default: true */
+  exportable?: boolean;
+  /** Custom value accessor specifically for export */
+  exportValue?: (row: TData, index: number) => any;
+  /** Custom formatter function specifically for export */
+  exportFormatter?: (value: any, row: TData, index: number) => string;
 
   /* Compatibility Aliases */
   accessorKey?: keyof TData | string;

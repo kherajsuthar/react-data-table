@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ColumnDef, ColumnPinPosition } from '../../types/column.types';
 import { getCellValue } from '../../utils/getCellValue';
+import { parseColumnWidth } from '../../hooks/useColumnPinning';
 import { TextCell } from '../cells/TextCell';
 import { BadgeCell } from '../cells/BadgeCell';
 import { AvatarCell } from '../cells/AvatarCell';
@@ -12,15 +13,18 @@ export interface DataTableCellProps<TData = any> {
   rowIndex: number;
   pinPosition?: ColumnPinPosition;
   stickyOffset?: number;
+  isLastPinnedLeft?: boolean;
+  isFirstPinnedRight?: boolean;
 }
 
-export const DataTableCell = <TData extends Record<string, any>>({
-  column,
-  row,
-  rowIndex,
-  pinPosition = false,
-  stickyOffset,
-}: DataTableCellProps<TData>): React.ReactNode => {
+/**
+ * Renders the formatted cell content based on column definition rules (avatar, badge, date, text, custom render)
+ */
+export const renderCellContent = <TData extends Record<string, any>>(
+  column: ColumnDef<TData>,
+  row: TData,
+  rowIndex: number
+): React.ReactNode => {
   const value = getCellValue(row, column, rowIndex);
 
   // Secondary description
@@ -29,88 +33,97 @@ export const DataTableCell = <TData extends Record<string, any>>({
       ? column.description(row)
       : column.description;
 
-  // Render cell content based on rules
-  const renderCellContent = () => {
-    // 1. Custom render function
-    if (column.render) {
-      return column.render(value, row, rowIndex);
-    }
+  // 1. Custom render function
+  if (column.render) {
+    return column.render(value, row, rowIndex);
+  }
 
-    // 2. Custom cell component/prop
-    if (column.cell) {
-      return column.cell({ value, row, rowIndex, column });
-    }
+  // 2. Custom cell component/prop
+  if (column.cell) {
+    return column.cell({ value, row, rowIndex, column });
+  }
 
-    // 3. Avatar cell
-    if (column.type === 'avatar' || column.avatar) {
-      const avatarSrc =
-        typeof column.avatar === 'function' ? column.avatar(row) : column.avatar;
-      return (
-        <AvatarCell
-          avatar={avatarSrc}
-          value={value}
-          description={description}
-        />
-      );
-    }
+  // 3. Avatar cell
+  if (column.type === 'avatar' || column.avatar) {
+    const avatarSrc =
+      typeof column.avatar === 'function' ? column.avatar(row) : column.avatar;
+    return (
+      <AvatarCell
+        avatar={avatarSrc}
+        value={value}
+        description={description}
+      />
+    );
+  }
 
-    // 4. Badge cell
-    if (column.type === 'badge' || column.badge) {
-      const badgeConfig =
-        typeof column.badge === 'function'
-          ? column.badge(value, row)
-          : column.badge || {};
-      return (
-        <BadgeCell
-          value={value}
-          variant={badgeConfig.variant}
-          color={badgeConfig.color}
-          dot={badgeConfig.dot}
-          label={badgeConfig.label}
-          description={description}
-        />
-      );
-    }
+  // 4. Badge cell
+  if (column.type === 'badge' || column.badge) {
+    const badgeConfig =
+      typeof column.badge === 'function'
+        ? column.badge(value, row)
+        : column.badge || {};
+    return (
+      <BadgeCell
+        value={value}
+        variant={badgeConfig.variant}
+        color={badgeConfig.color}
+        dot={badgeConfig.dot}
+        label={badgeConfig.label}
+        description={description}
+      />
+    );
+  }
 
-    // 5. Date cell
-    if (column.type === 'date') {
-      return <DateCell value={value} description={description} />;
-    }
+  // 5. Date cell
+  if (column.type === 'date') {
+    return <DateCell value={value} description={description} />;
+  }
 
-    // 6. Number cell
-    if (column.type === 'number') {
-      const displayVal =
-        typeof value === 'number' ? value.toLocaleString() : value;
-      return (
-        <TextCell
-          value={displayVal}
-          description={description}
-          copy={column.copy}
-        />
-      );
-    }
-
-    // 7. Standard text cell (with copy support)
+  // 6. Number cell
+  if (column.type === 'number') {
+    const displayVal =
+      typeof value === 'number' ? value.toLocaleString() : value;
     return (
       <TextCell
-        value={value}
+        value={displayVal}
         description={description}
         copy={column.copy}
       />
     );
-  };
+  }
 
+  // 7. Standard text cell (with copy support)
+  return (
+    <TextCell
+      value={value}
+      description={description}
+      copy={column.copy}
+    />
+  );
+};
+
+export const DataTableCell = <TData extends Record<string, any>>({
+  column,
+  row,
+  rowIndex,
+  pinPosition = false,
+  stickyOffset,
+  isLastPinnedLeft = false,
+  isFirstPinnedRight = false,
+}: DataTableCellProps<TData>): React.ReactNode => {
   const alignClass = column.align ? `rdt-align-${column.align}` : 'rdt-align-left';
   const pinClass =
     pinPosition === 'left'
-      ? 'rdt-pinned-left'
+      ? `rdt-pinned-left ${isLastPinnedLeft ? 'rdt-pinned-last-left' : ''}`
       : pinPosition === 'right'
-      ? 'rdt-pinned-right'
+      ? `rdt-pinned-right ${isFirstPinnedRight ? 'rdt-pinned-first-right' : ''}`
       : '';
 
+  const colWidth = pinPosition ? parseColumnWidth(column.width, column.minWidth, 140) : column.width;
+
   const style: React.CSSProperties = {
-    width: column.width,
-    minWidth: column.minWidth,
+    width: colWidth,
+    minWidth: pinPosition ? colWidth : column.minWidth,
     maxWidth: column.maxWidth,
     ...(pinPosition === 'left' && stickyOffset !== undefined ? { left: stickyOffset } : {}),
     ...(pinPosition === 'right' && stickyOffset !== undefined ? { right: stickyOffset } : {}),
@@ -121,7 +134,7 @@ export const DataTableCell = <TData extends Record<string, any>>({
       className={`rdt-td ${alignClass} ${pinClass} ${column.className || ''}`}
       style={style}
     >
-      {renderCellContent()}
+      {renderCellContent(column, row, rowIndex)}
     </td>
   );
 };

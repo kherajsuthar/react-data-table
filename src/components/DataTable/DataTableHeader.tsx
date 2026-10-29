@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import type { ColumnDef, ColumnPinPosition, SortDirection } from '../../types/column.types';
 import { getColumnId } from '../../utils/getCellValue';
+import { parseColumnWidth } from '../../hooks/useColumnPinning';
 
 export interface DataTableHeaderProps<TData = any> {
   columns: ColumnDef<TData>[];
@@ -17,6 +18,7 @@ export interface DataTableHeaderProps<TData = any> {
   serialNumberTitle?: React.ReactNode;
   // Actions
   hasActions?: boolean;
+  pinActions?: boolean;
   actionColumnTitle?: React.ReactNode;
   // Drag & Reorder
   enableColumnReorder?: boolean;
@@ -31,6 +33,9 @@ export interface DataTableHeaderProps<TData = any> {
   getPinPosition?: (columnId: string) => ColumnPinPosition;
   canPinColumn?: (column: ColumnDef<TData>) => boolean;
   pinColumn?: (columnId: string, position: ColumnPinPosition) => void;
+  getStickyOffset?: (columnId: string) => number | undefined;
+  isLastPinnedLeft?: (columnId: string) => boolean;
+  isFirstPinnedRight?: (columnId: string) => boolean;
 }
 
 export const DataTableHeader = <TData extends Record<string, any>>({
@@ -45,6 +50,7 @@ export const DataTableHeader = <TData extends Record<string, any>>({
   serialNumber = false,
   serialNumberTitle = '#',
   hasActions = false,
+  pinActions = false,
   actionColumnTitle = 'Actions',
   enableColumnReorder = true,
   dragOverColumnId,
@@ -57,6 +63,9 @@ export const DataTableHeader = <TData extends Record<string, any>>({
   getPinPosition,
   canPinColumn,
   pinColumn,
+  getStickyOffset,
+  isLastPinnedLeft,
+  isFirstPinnedRight,
 }: DataTableHeaderProps<TData>): React.ReactNode => {
   const checkboxRef = useRef<HTMLInputElement>(null);
 
@@ -71,7 +80,12 @@ export const DataTableHeader = <TData extends Record<string, any>>({
       <tr className="rdt-tr rdt-header-row">
         {/* 1. Select All Checkbox */}
         {enableRowSelection && (
-          <th className="rdt-th rdt-th-selection rdt-pinned-left rdt-no-print" style={{ left: 0, width: 44 }}>
+          <th
+            className={`rdt-th rdt-th-selection rdt-pinned-left rdt-no-print ${
+              isLastPinnedLeft?.('__rdt_selection') ? 'rdt-pinned-last-left' : ''
+            }`}
+            style={{ left: 0, width: 44, minWidth: 44 }}
+          >
             <input
               ref={checkboxRef}
               type="checkbox"
@@ -86,10 +100,13 @@ export const DataTableHeader = <TData extends Record<string, any>>({
         {/* 2. Serial Number Header */}
         {serialNumber && (
           <th
-            className="rdt-th rdt-th-serial rdt-pinned-left"
+            className={`rdt-th rdt-th-serial rdt-pinned-left ${
+              isLastPinnedLeft?.('__rdt_serial') ? 'rdt-pinned-last-left' : ''
+            }`}
             style={{
               left: enableRowSelection ? 44 : 0,
               width: 56,
+              minWidth: 56,
               textAlign: 'center',
             }}
           >
@@ -105,19 +122,26 @@ export const DataTableHeader = <TData extends Record<string, any>>({
           const pin = getPinPosition ? getPinPosition(colId) : false;
           const isPinAllowed = enableColumnPinning && (!canPinColumn || canPinColumn(column));
           const isDragOver = dragOverColumnId === colId;
+          const stickyOffset = getStickyOffset ? getStickyOffset(colId) : undefined;
+          const isLastLeft = isLastPinnedLeft ? isLastPinnedLeft(colId) : false;
+          const isFirstRight = isFirstPinnedRight ? isFirstPinnedRight(colId) : false;
 
           const alignClass = column.align ? `rdt-align-${column.align}` : 'rdt-align-left';
           const pinClass =
             pin === 'left'
-              ? 'rdt-pinned-left'
+              ? `rdt-pinned-left ${isLastLeft ? 'rdt-pinned-last-left' : ''}`
               : pin === 'right'
-              ? 'rdt-pinned-right'
+              ? `rdt-pinned-right ${isFirstRight ? 'rdt-pinned-first-right' : ''}`
               : '';
 
+          const colWidth = pin ? parseColumnWidth(column.width, column.minWidth, 140) : column.width;
+
           const style: React.CSSProperties = {
-            width: column.width,
-            minWidth: column.minWidth,
+            width: colWidth,
+            minWidth: pin ? colWidth : column.minWidth,
             maxWidth: column.maxWidth,
+            ...(pin === 'left' && stickyOffset !== undefined ? { left: stickyOffset } : {}),
+            ...(pin === 'right' && stickyOffset !== undefined ? { right: stickyOffset } : {}),
           };
 
           const handleHeaderClick = () => {
@@ -212,8 +236,15 @@ export const DataTableHeader = <TData extends Record<string, any>>({
         {/* 4. Actions Header */}
         {hasActions && (
           <th
-            className="rdt-th rdt-th-actions rdt-pinned-right rdt-no-print"
-            style={{ right: 0, width: 60, textAlign: 'center' }}
+            className={`rdt-th rdt-th-actions rdt-no-print ${
+              pinActions ? `rdt-pinned-right ${isFirstPinnedRight?.('__rdt_actions') ? 'rdt-pinned-first-right' : ''}` : ''
+            }`}
+            style={{
+              width: 64,
+              minWidth: 64,
+              textAlign: 'center',
+              ...(pinActions ? { right: 0 } : {}),
+            }}
           >
             {actionColumnTitle}
           </th>

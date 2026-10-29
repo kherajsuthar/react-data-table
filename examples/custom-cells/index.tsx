@@ -132,7 +132,7 @@ export const CustomCellsExample: React.FC = () => {
   ];
 
   return (
-    <div style={{ padding: 24, maxWidth: 1100, margin: '0 auto' }}>
+    <div style={{ padding: '16px', maxWidth: 1100, margin: '0 auto', width: '100%', boxSizing: 'border-box' }}>
       <h2>Custom Cells, Column Pinning, and Selection</h2>
       <p style={{ color: '#64748b', marginBottom: 20 }}>
         Featuring AvatarCell with fallback initials, BadgeCell with indicators, DateCell formatting, copy-to-clipboard, sticky column pinning, and row selection.
